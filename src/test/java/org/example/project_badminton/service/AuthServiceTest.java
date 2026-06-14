@@ -215,12 +215,12 @@ class AuthServiceTest {
                 .username("dinhthanh")
                 .build();
 
-        Date expirationDate = new Date(System.currentTimeMillis() + 3600000);
+        Long expirationDate = System.currentTimeMillis() + 3600000;
 
         when(jwtService.extractUsername(jwt))
                 .thenReturn("dinhthanh");
         when(jwtService.extractExpiration(jwt))
-                .thenReturn(expirationDate);
+                .thenReturn(new Date(expirationDate));
         when(userRepository.findByUsername("dinhthanh"))
                 .thenReturn(user);
 
@@ -229,7 +229,7 @@ class AuthServiceTest {
         verify(tokenBlacklistRepository).save(
                 argThat((org.example.project_badminton.entity.TokenBlacklist token) ->
                         token.getToken().equals(jwt)
-                                && token.getExpiryDate().equals(expirationDate.toInstant())
+                                && token.getExpiration().equals(expirationDate)
                 )
         );
 
